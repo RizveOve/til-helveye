@@ -1079,7 +1079,7 @@ function updateRain(dt) {
 }
 
 /* ================= audio ================= */
-let AC = null, master = null, bus = null, noiseBuf = null, hum = null, humGain = null, humF = null, muted = false, alarmUntil = 0;
+let voiceIn = null, voiceOut = null, AC = null, master = null, bus = null, noiseBuf = null, hum = null, humGain = null, humF = null, muted = false, alarmUntil = 0;
 try { muted = localStorage.getItem('fem-mute') === '1'; } catch (e) {}
 function initAudio() {
   if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
@@ -1088,6 +1088,11 @@ function initAudio() {
     master = AC.createGain(); master.gain.value = muted ? 0 : .8;
     const comp = AC.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 6;
     master.connect(comp); comp.connect(AC.destination);
+    // voices get their own louder chain, so a yell is never buried under the crash and boom
+    voiceIn = AC.createGain(); voiceIn.gain.value = 2.6;
+    const vComp = AC.createDynamicsCompressor(); vComp.threshold.value = -18; vComp.ratio.value = 12; vComp.attack.value = .003; vComp.release.value = .12;
+    voiceOut = AC.createGain(); voiceOut.gain.value = muted ? 0 : 1;
+    voiceIn.connect(vComp); vComp.connect(voiceOut); voiceOut.connect(AC.destination);
     noiseBuf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
     const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     // street reverb: a short generated impulse so crashes ring off the buildings
@@ -1127,6 +1132,16 @@ function b64buf(b) { const s = atob(b), u = new Uint8Array(s.length); for (let i
 function decodeClip(cat, i) {
   const b = clipRaw[cat] && clipRaw[cat][i]; if (!b || !AC) return; clipRaw[cat][i] = null;
   try { const r = AC.decodeAudioData(b64buf(b), buf => { clips[cat][i] = buf; }, () => {}); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+}
+function playVoice(buf, vol = 1, rate = 1) {
+  if (!AC || !voiceIn) return null;
+  const s = AC.createBufferSource(); s.buffer = buf; s.playbackRate.value = rate;
+  const g = AC.createGain(); g.gain.value = vol; s.connect(g); g.connect(voiceIn); s.start();
+  if (!muted) { // duck the street sounds while someone is talking
+    const now = AC.currentTime, end = now + buf.duration / rate;
+    master.gain.cancelScheduledValues(now); master.gain.setTargetAtTime(.28, now, .02); master.gain.setTargetAtTime(.8, end, .12);
+  }
+  return s;
 }
 function decodeAllClips() { for (const cat in clipRaw) clipRaw[cat].forEach((b, i) => { if (b) decodeClip(cat, i); }); }
 function playBuf(buf, vol = 1, rate = 1) { if (!AC) return null; const s = AC.createBufferSource(); s.buffer = buf; s.playbackRate.value = rate; const g = AC.createGain(); g.gain.value = vol; s.connect(g); g.connect(bus); s.start(); return s; }
@@ -1232,7 +1247,7 @@ function say(list, o = {}) {
       if (voiceSrc) try { voiceSrc.stop(); } catch (e) {}
       if (tts) try { tts.cancel(); } catch (e) {}
       const idx = o.idx != null && arr[o.idx] ? o.idx : ready[Math.floor(Math.random() * ready.length)];
-      const src = playBuf(arr[idx], o.vol ?? 1.15, o.rate && o.cat !== 'shouts' ? clamp(o.rate, .9, 1.15) : rand(.96, 1.06));
+      const src = playVoice(arr[idx], o.vol ?? 1.15, o.rate && o.cat !== 'shouts' ? clamp(o.rate, .9, 1.15) : rand(.96, 1.06));
       if (src) { voiceSrc = src; src.onended = () => { if (voiceSrc === src) voiceSrc = null; }; }
       sayCd = o.cd ?? 1.1; return;
     }
@@ -1248,7 +1263,7 @@ function say(list, o = {}) {
     tts.speak(u); sayCd = o.cd ?? 1.6;
   } catch (e) {}
 }
-function setMute(m) { muted = m; if (m && tts) try { tts.cancel(); } catch (e) {} if (master) master.gain.value = m ? 0 : .7; try { localStorage.setItem('fem-mute', m ? '1' : '0'); } catch (e) {} $('mute').textContent = m ? t('soundOff') : t('soundOn'); }
+function setMute(m) { muted = m; if (m && tts) try { tts.cancel(); } catch (e) {} if (master) { master.gain.cancelScheduledValues(0); master.gain.value = m ? 0 : .8; } if (voiceOut) voiceOut.gain.value = m ? 0 : 1; try { localStorage.setItem('fem-mute', m ? '1' : '0'); } catch (e) {} $('mute').textContent = m ? t('soundOff') : t('soundOn'); }
 
 /* ================= input ================= */
 const keys = { gas: 0, brake: 0, left: 0, right: 0, boost: 0 };
