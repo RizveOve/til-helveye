@@ -1,0 +1,119 @@
+{
+ "start": [
+  "start-0.mp3",
+  "start-1.mp3",
+  "start-2.mp3"
+ ],
+ "smash": [
+  "smash-0.mp3",
+  "smash-1.mp3",
+  "smash-2.mp3",
+  "smash-3.mp3",
+  "smash-4.mp3",
+  "smash-5.mp3",
+  "smash-6.mp3",
+  "smash-7.mp3",
+  "smash-8.mp3"
+ ],
+ "heavy": [
+  "heavy-0.mp3",
+  "heavy-1.mp3",
+  "heavy-2.mp3",
+  "heavy-3.mp3",
+  "heavy-4.mp3",
+  "heavy-5.mp3"
+ ],
+ "tram": [
+  "tram-0.mp3",
+  "tram-1.mp3"
+ ],
+ "altinn": [
+  "altinn-0.mp3",
+  "altinn-1.mp3"
+ ],
+ "full": [
+  "full-0.mp3"
+ ],
+ "spotted": [
+  "spotted-0.mp3",
+  "spotted-1.mp3",
+  "spotted-2.mp3"
+ ],
+ "bomb": [
+  "bomb-0.mp3",
+  "bomb-1.mp3",
+  "bomb-2.mp3",
+  "bomb-3.mp3",
+  "bomb-4.mp3",
+  "bomb-5.mp3",
+  "bomb-6.mp3",
+  "bomb-7.mp3",
+  "bomb-8.mp3",
+  "bomb-9.mp3",
+  "bomb-10.mp3",
+  "bomb-11.mp3",
+  "bomb-12.mp3",
+  "bomb-13.mp3",
+  "bomb-14.mp3",
+  "bomb-15.mp3",
+  "bomb-16.mp3",
+  "bomb-17.mp3",
+  "bomb-18.mp3",
+  "bomb-19.mp3"
+ ],
+ "beat": [
+  "beat-0.mp3",
+  "beat-1.mp3",
+  "beat-2.mp3"
+ ],
+ "ouch": [
+  "ouch-0.mp3",
+  "ouch-1.mp3",
+  "ouch-2.mp3"
+ ],
+ "dodge": [
+  "dodge-0.mp3",
+  "dodge-1.mp3",
+  "dodge-2.mp3",
+  "dodge-3.mp3",
+  "dodge-4.mp3",
+  "dodge-5.mp3"
+ ],
+ "hit": [
+  "hit-0.mp3",
+  "hit-1.mp3",
+  "hit-2.mp3",
+  "hit-3.mp3"
+ ],
+ "police": [
+  "police-0.mp3",
+  "police-1.mp3",
+  "police-2.mp3"
+ ],
+ "police_end": [
+  "police_end-0.mp3",
+  "police_end-1.mp3"
+ ],
+ "tram_end": [
+  "tram_end-0.mp3"
+ ],
+ "bus_end": [
+  "bus_end-0.mp3"
+ ],
+ "caught_end": [
+  "caught_end-0.mp3"
+ ],
+ "fjord_end": [
+  "fjord_end-0.mp3"
+ ],
+ "shouts": [
+  "shouts-0.mp3",
+  "shouts-1.mp3",
+  "shouts-2.mp3",
+  "shouts-3.mp3",
+  "shouts-4.mp3",
+  "shouts-5.mp3",
+  "shouts-6.mp3",
+  "shouts-7.mp3"
+ ]
+}
